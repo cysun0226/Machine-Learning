@@ -4,6 +4,9 @@ import numpy as np
 from numpy import array
 from sklearn import tree
 from random import shuffle
+from sklearn.neighbors import KDTree
+from sklearn.neighbors import NearestNeighbors
+from sklearn.neighbors import KNeighborsClassifier
 
 iris_file = str(sys.argv[1])
 # test_file = str(sys.argv[2])
@@ -75,19 +78,19 @@ for line in test_set:
         print('[ wrong ] iClass = ' + iClass + ' | Predict = ' + iPredict[0])
 
 acc = correct / total
-print('accuracy = %f' % acc)
+print('decision tree accuracy = %f' % acc)
 
-# iPredict = clf.predict([array([6.2,2.6,4.8,1.7])])
-# print(iPredict)
-# iPredict = clf.predict([array([5.1,3.5,1.4,0.1])])
-# print(iPredict)
-# iPredict = clf.predict([array([5.6,2.85,3.55,1.3])])
-# print(iPredict)
+# KD-tree
+knn = KNeighborsClassifier(n_neighbors=10, algorithm="kd_tree").fit(iris['data'],iris['target'])
+print(iris['target'][0])
+print(knn.predict_proba([iris['data'][0]]))
+print(iris['target'][1])
+print(knn.predict_proba([iris['data'][1]]))
+# nbrs = NearestNeighbors(n_neighbors=5, algorithm="kd_tree").fit(iris['data'])
+# kdt = KDTree(iris['data'], metric='euclidean')
+# ind = kdt.query([iris['data'][0]], k=5, return_distance=False)
+# print(ind)
 
-
-# print(iris['target_names'])
-# print(iris['target'])
-# print(iris['feature_names'])
-# print(iris['data'])
 #
-# print((iris['data'][0][0]))
+# X = np.array([[-1, -1], [-2, -1], [-3, -2], [1, 1], [2, 1], [3, 2]])
+# >>> kdt = KDTree(X, leaf_size=30, metric='euclidean')
