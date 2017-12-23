@@ -1,6 +1,8 @@
 import sys
 import numpy as np
 from numpy import array
+from sklearn import tree
+from random import shuffle
 
 iris_file = str(sys.argv[1])
 # test_file = str(sys.argv[2])
@@ -34,11 +36,23 @@ for line in train_file.readlines():
     else: # Iris-virginica
         target.append(2)
 
-# iris['target_names'] = array(target_names)
-# iris['target'] = array(target)
-# iris['feature_names'] = array(feature_names)
-# iris['data'] = array(data)
-#
+iris['target_names'] = array(target_names)
+iris['target'] = array(target)
+iris['feature_names'] = array(feature_names)
+iris['data'] = array(data)
+
+# decision tree
+clf = tree.DecisionTreeClassifier()
+clf = clf.fit(iris['data'], iris['target'])
+
+iPredict = clf.predict([array([6.2,2.6,4.8,1.7])])
+print(iPredict)
+iPredict = clf.predict([array([5.1,3.5,1.4,0.1])])
+print(iPredict)
+iPredict = clf.predict([array([5.6,2.85,3.55,1.3])])
+print(iPredict)
+
+
 # print(iris['target_names'])
 # print(iris['target'])
 # print(iris['feature_names'])
