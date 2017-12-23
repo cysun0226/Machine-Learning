@@ -6,8 +6,8 @@ from numpy import array
 from random import shuffle
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.model_selection import cross_val_score
-from sklearn.preprocessing import OneHotEncoder
-enc = OneHotEncoder()
+from sklearn.preprocessing import normalize
+from sklearn.neighbors import KNeighborsRegressor
 
 forestfire_file = str(sys.argv[1])
 lines = []
@@ -110,7 +110,6 @@ print('test_set = %d' % total)
 # build decision tree
 tree_regressor = DecisionTreeRegressor(random_state=0)
 tree_regressor.fit(forestfire['data'], forestfire['target'])
-# p = tree_regressor.predict([forestfire['data'][0]])
 
 # test
 print('\n\n----- decision tree -----\n')
@@ -118,13 +117,49 @@ acc_sum = 0
 
 for i in range(len(test_set)):
     aPredict = tree_regressor.predict(test_data[i])
-
-    x=True if 'a'=='a' else False
     logTest = 0 if test_target[i] == 0 else math.log10(test_target[i])
     predTest = 0 if aPredict[0] == 0 else math.log10(aPredict[0])
     acc = abs(logTest - predTest)
     acc_sum += acc
-    print('test area = %8.2f | Predict area= %8.2f | diff = %f' % (test_target[i],aPredict[0], acc))
+    # print('test area = %8.2f | Predict area= %8.2f | diff = %f' % (test_target[i],aPredict[0], acc))
 
 tree_acc = acc_sum / total
 print('\ndecision tree predict diff = %f' % tree_acc)
+
+# kNN
+# normalize
+knn_train = {}
+knn_train = forestfire
+knn_data = []
+
+for d in range(len(forestfire['data'][0])):
+    feature = []
+    for r in range(len(forestfire['data'])):
+        feature.append(forestfire['data'][r][d])
+    knn_data.append(feature)
+
+for f in range(len(forestfire['data'][0])):
+    knn_data[f] = normalize([knn_data[f]])
+
+for d in range(len(forestfire['data'][0])):
+    for r in range(len(forestfire['data'])):
+        knn_train['data'][r][d] = knn_data[d][0][r]
+
+# kNN regressor
+neiRgr = KNeighborsRegressor(n_neighbors=10)
+neiRgr.fit(knn_train['data'], knn_train['target'])
+
+# test
+print('\n\n----- kNN -----\n')
+acc_sum = 0
+
+for i in range(len(test_set)):
+    aPredict = neiRgr.predict(test_data[i])
+    logTest = 0 if test_target[i] == 0 else math.log10(test_target[i])
+    predTest = 0 if aPredict[0] == 0 else math.log10(aPredict[0])
+    acc = abs(logTest - predTest)
+    acc_sum += acc
+    # print('test area = %8.2f | Predict area= %8.2f | diff = %f' % (test_target[i],aPredict[0], acc))
+
+tree_acc = acc_sum / total
+print('\nkNN predict diff = %f' % tree_acc)
