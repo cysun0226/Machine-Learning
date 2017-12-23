@@ -10,7 +10,6 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 
 iris_file = str(sys.argv[1])
-# test_file = str(sys.argv[2])
 train_file = open(iris_file, 'r', encoding='UTF-8')
 
 # main
