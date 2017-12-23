@@ -59,33 +59,53 @@ clf = tree.DecisionTreeClassifier()
 clf = clf.fit(iris['data'], iris['target'])
 
 # test
+test_data = []
+test_iClass = []
 total = len(test_set)
 correct = 0
 
 print('test_set = %d' % total)
+print('\n\n----- decision tree -----\n')
 
 for line in test_set:
     row = line.strip('\n')
     row = row.split(',')
     iClass = row.pop()
+    test_iClass.append(iClass)
     row = list(map(float, row))
+    test_data.append([array(row)])
     iPredict = clf.predict([array(row)])
 
     if iClass==iPredict[0]:
         correct += 1
-        print('[correct] iClass = ' + iClass + ' | Predict = ' + iPredict[0])
+        print('[correct] iClass = {0:15}'.format(iClass) + ' | Predict = ' + iPredict[0])
     else:
-        print('[ wrong ] iClass = ' + iClass + ' | Predict = ' + iPredict[0])
+        print('[ wrong ] iClass = {0:15}'.format(iClass) + ' | Predict = ' + iPredict[0])
 
 acc = correct / total
-print('decision tree accuracy = %f' % acc)
+print('\ndecision tree accuracy = %f' % acc)
 
-# KD-tree
-knn = KNeighborsClassifier(n_neighbors=10, algorithm="kd_tree").fit(iris['data'],iris['target'])
-print(iris['target'][0])
-print(knn.predict_proba([iris['data'][0]]))
-print(iris['target'][1])
-print(knn.predict_proba([iris['data'][1]]))
+# KNN
+print('\n\n----- kNN -----\n')
+knn = KNeighborsClassifier(n_neighbors=5, algorithm="kd_tree").fit(iris['data'],iris['target'])
+# test
+correct = 0
+
+for i in range(len(test_set)):
+    iPredict = knn.predict(test_data[i])
+    if test_iClass[i]==iPredict[0]:
+        correct += 1
+        print('[correct] iClass = {0:15}'.format(test_iClass[i]) + ' | Predict = ' + iPredict[0])
+    else:
+        print('[ wrong ] iClass = {0:15}'.format(test_iClass[i]) + ' | Predict = ' + iPredict[0])
+
+acc = correct / total
+print('\nkNN accuracy = %f' % acc)
+
+# print(iris['target'][0])
+# print(knn.predict_proba([iris['data'][0]]))
+# print(iris['target'][1])
+# print(knn.predict_proba([iris['data'][1]]))
 # nbrs = NearestNeighbors(n_neighbors=5, algorithm="kd_tree").fit(iris['data'])
 # kdt = KDTree(iris['data'], metric='euclidean')
 # ind = kdt.query([iris['data'][0]], k=5, return_distance=False)
