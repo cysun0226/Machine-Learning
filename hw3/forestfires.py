@@ -114,7 +114,10 @@ for x in range(time):
         cd.append(month_to_int(line[2]))
         cd.append(day_to_int(line[3]))
         cat_data.append(cd)
-        target.append(float(line[12]))
+        if float(line[12]) == 0:
+            target.append(0) # area
+        else:
+            target.append(math.log10(float(line[12]))) # area
 
     forestfire['target'] = array(target)
     forestfire['feature_names'] = array(feature_names)
@@ -151,7 +154,10 @@ for x in range(time):
         cd.append(month_to_int(line[2]))
         cd.append(day_to_int(line[3]))
         testNB_cat_data.append(cd)
-        test_target.append(float(line[12]))
+        if float(line[12]) == 0:
+            test_target.append(0) # area
+        else:
+            test_target.append(math.log10(float(line[12]))) # area
 
 
     total = len(test_set)
@@ -168,8 +174,10 @@ for x in range(time):
 
     for i in range(len(test_set)):
         aPredict = tree_regressor.predict(test_data[i])
-        logTest = 0 if test_target[i] == 0 else math.log10(test_target[i])
-        predTest = 0 if aPredict[0] == 0 else math.log10(aPredict[0])
+        # logTest = 0 if test_target[i] == 0 else math.log10(test_target[i])
+        # predTest = 0 if aPredict[0] == 0 else math.log10(aPredict[0])
+        logTest = test_target[i]
+        predTest = aPredict[0]
         acc = abs(logTest - predTest)
         acc_sum += acc
         if print_result=='y':
@@ -209,8 +217,10 @@ for x in range(time):
 
     for i in range(len(test_set)):
         aPredict = neiRgr.predict(test_data[i])
-        logTest = 0 if test_target[i] == 0 else math.log10(test_target[i])
-        predTest = 0 if aPredict[0] == 0 else math.log10(aPredict[0])
+        # logTest = 0 if test_target[i] == 0 else math.log10(test_target[i])
+        # predTest = 0 if aPredict[0] == 0 else math.log10(aPredict[0])
+        logTest = test_target[i]
+        predTest = aPredict[0]
         acc = abs(logTest - predTest)
         acc_sum += acc
         if print_result=='y':
@@ -260,8 +270,10 @@ for x in range(time):
         hp = hNB.predict([p])
         h = float(hp[0].decode('UTF-8'))
 
-        logTest = 0 if test_target[i] == 0 else math.log10(test_target[i])
-        predTest = 0 if h == 0 else math.log10(h)
+        # logTest = 0 if test_target[i] == 0 else math.log10(test_target[i])
+        # predTest = 0 if h == 0 else math.log10(h)
+        logTest = test_target[i]
+        predTest = h
         acc = abs(logTest - predTest)
         acc_sum += acc
         if print_result=='y':
