@@ -212,7 +212,7 @@ for x in range(time):
             knn_train['data'][r][d] = knn_data[d][0][r]
 
     # kNN regressor
-    neiRgr = KNeighborsRegressor(n_neighbors=3)
+    neiRgr = KNeighborsRegressor(n_neighbors=5)
     neiRgr.fit(knn_train['data'], knn_train['target'])
 
     # test
