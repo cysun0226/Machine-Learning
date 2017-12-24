@@ -24,7 +24,9 @@ Or I recommend writing results into other file rather than print on screen (sinc
 
 ### execute time
 > execute time: [input number]
+
 ### print detailed result
 > print detailed results?(y/n): ['y'/'n']
+
 * If input == 'y', then it will print each test data and result.
 * If input != 'y', then only print out each difference and average differences.
