@@ -237,40 +237,14 @@ for i in range(1, 13):
 
 # 計算各星座的特質
 calAttr(starSignAttr, starSignData)
-# for i in range(1, 13): # 12 個星座
-#     for a in range(1, 32): # 32 題
-#         starSignAttr[getSignName(i)][getAttrName(a)] /= len(starSignData[getSignName(i)])
 
 print('\n\n')
 
 # 列出每個星座前五高的特質
-for i in range(1, 13): # 12 個星座
-    sorted_a = sorted(starSignAttr[getSignName(i)].items(), key=operator.itemgetter(1))
-    sorted_a.reverse()
-    print('---' + getSignName(i) + '---\n')
-    for attr in range(5):
-        print(sorted_a[attr])
-    print('\n\n')
+highestAttr(starSignAttr, 5)
 
 # 每個特質最高與最低的星座
-for a in range(1, 32):
-    attr = {}
-    for s in range(1, 13):
-        attr[getSignName(s)] = starSignAttr[getSignName(s)][getAttrName(a)]
-
-    sorted_attr = sorted(attr.items(), key=operator.itemgetter(1))
-    sorted_attr.reverse()
-
-    print('--- ' + getAttrName(a) + '---')
-    print('\n前三名\n')
-    print(sorted_attr[0])
-    print(sorted_attr[1])
-    print(sorted_attr[2])
-    print('\n後三名\n')
-    print(sorted_attr[11])
-    print(sorted_attr[10])
-    print(sorted_attr[9])
-    print('\n\n')
+maxAttrSign(starSignAttr, 3)
 
 # 他人眼中的星座
 print('\n=== 他人眼中的xx座 ===\n')
