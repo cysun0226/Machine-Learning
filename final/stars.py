@@ -4,18 +4,80 @@ import sys
 import numpy as np
 from numpy import array
 from random import shuffle
+import operator
 
 from sklearn import tree
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 # from sklearn.preprocessing import normalize
 
-
 star_file = str(sys.argv[1])
 lines = []
 data = []
 target = []
-starSign = {}
+
+def getSignName(num):
+    return {
+        1 : '摩羯座',
+        2 : '水瓶座',
+        3 : '雙魚座',
+        4 : '牡羊座',
+        5 : '金牛座',
+        6 : '雙子座',
+        7 : '巨蟹座',
+        8 : '獅子座',
+        9 : '處女座',
+        10: '天秤座',
+        11: '天蠍座',
+        12: '射手座'
+    }[num]
+
+def getAttrName(num):
+    return {
+        1 : '耐性',
+        2 : '脾氣暴躁',
+        3 : '幼稚',
+        4 : '頑固',
+        5 : '心思細膩',
+        6 : '保守',
+        7 : '冷靜',
+        8 : '樂觀',
+        9 : '活潑',
+        10: '公正',
+        11: '優柔寡斷',
+        12: '強勢',
+        13: '浪漫',
+        14: '過度理想化',
+        15: '斤斤計較',
+        16: '心機重',
+        17: '完美主義',
+        18: '愛計仇',
+        19: '與眾不同',
+        20: '愛面子',
+        21: '有魅力',
+        22: '正義感',
+        23: '重視友情',
+        24: '專情',
+        25: '愛哭',
+        26: '顧家',
+        27: '體貼',
+        28: '情緒化',
+        29: '口才',
+        30: '創意',
+        31: '潔癖'
+    }[num]
+
+
+starSignData = {}
+starSignAttr = {}
+
+a = {}
+for i in range(1, 32):
+    a[getAttrName(i)] = 0
+
+for i in range(1, 13):
+    starSignData[getSignName(i)] = []
+    starSignAttr[getSignName(i)] = dict(a)
 
 # main
 tree_avg_sum = 0
@@ -41,7 +103,7 @@ feature_names = lines[0]
 # print result header
 del feature_names[0] # remove time stamp
 del feature_names[len(feature_names)-2] # remove commands
-print(feature_names)
+# print(feature_names)
 print('\n\n===== star-sign data set =====\n')
 print('資料總數 = %d 份\n' % len(lines))
 total_num = len(lines)
@@ -117,263 +179,30 @@ for line in lines:
     data.append(d)
     i += 1
 
-# Aries
-Aries = []
+# 將資料依星座分類並加總特質
 for row in data:
-    if(row['星座'] == '牡羊座'):
-        Aries.append(row)
+    for i in range(1, 32):
+        starSignAttr[row['星座']][getAttrName(i)] += row[getAttrName(i)]
 
-# 
+    for i in range(1, 13):
+        if(row['星座'] == getSignName(i)):
+            starSignData[getSignName(i)].append(row)
 
+for i in range(1, 13):
+    print(getSignName(i) + ' = %d' % len(starSignData[getSignName(i)]))
 
-# for d in data:
-#     print(d)
+# 計算各星座的特質
+for i in range(1, 13): # 12 個星座
+    for a in range(1, 32): # 32 題
+        starSignAttr[getSignName(i)][getAttrName(a)] /= len(starSignData[getSignName(i)])
 
-    # d = []
-    # cd = []
-    # d.append(int(line[0])) # X
-    # d.append(int(line[1])) # Y
-    # d.append(month_to_int(line[2])) # month
-    # d.append(day_to_int(line[3])) # day
-    # d.append(float(line[4])) # FFMC
-    # d.append(float(line[5])) # DMC
-    # d.append(float(line[6])) # DC
-    # d.append(float(line[7])) # ISI
-    # d.append(float(line[8])) # temp
-    # d.append(float(line[9])) # RH
-    # d.append(float(line[10])) # wind
-    # d.append(float(line[11])) # rain
-    # data.append(d)
-    # db = list(d)
-    # del db[2]
-    # del db[2]
-    # cont_data.append(db)
-    # cd.append(month_to_int(line[2]))
-    # cd.append(day_to_int(line[3]))
-    # cat_data.append(cd)
-    # target.append(float(line[12]))
-    # if float(line[12]) == 0:
-    #     target.append(-10) # area
-    # else:
-    #     target.append(math.log10(float(line[12]))) # area
+print('\n\n')
 
-# forestfire['target'] = array(target)
-# forestfire['feature_names'] = array(feature_names)
-# forestfire['data'] = array(data)
-# forestfire_nb['target'] = array(target)
-# forestfire_nb['cont_data'] = array(cont_data)
-# forestfire_nb['cat_data'] = array(cat_data)
-#
-#     # test set
-#     test_data = []
-#     testNB_cat_data = []
-#     testNB_cont_data = []
-#     test_target = []
-#     for line in test_set:
-#         d = []
-#         cd = []
-#         d.append(int(line[0])) # X
-#         d.append(int(line[1])) # Y
-#         d.append(month_to_int(line[2])) # month
-#         d.append(day_to_int(line[3])) # day
-#         d.append(float(line[4])) # FFMC
-#         d.append(float(line[5])) # DMC
-#         d.append(float(line[6])) # DC
-#         d.append(float(line[7])) # ISI
-#         d.append(float(line[8])) # temp
-#         d.append(float(line[9])) # RH
-#         d.append(float(line[10])) # wind
-#         d.append(float(line[11])) # rain
-#         test_data.append([array(d)])
-#         db = list(d)
-#         del db[2]
-#         del db[2]
-#         testNB_cont_data.append(db)
-#         cd.append(month_to_int(line[2]))
-#         cd.append(day_to_int(line[3]))
-#         testNB_cat_data.append(cd)
-#         test_target.append(float(line[12]))
-#         # if float(line[12]) == 0:
-#         #     test_target.append(-10) # area
-#         # else:
-#         #     test_target.append(math.log10(float(line[12]))) # area
-#
-#
-#     total = len(test_set)
-#     correct = 0
-#
-#     # build decision tree
-#     tree_regressor = DecisionTreeRegressor(random_state=0)
-#     tree_regressor.fit(forestfire['data'], forestfire['target'])
-#
-#     # test
-#     if print_result=='y':
-#         print('\n\n----- decision tree -----\n')
-#     acc_sum = 0
-#
-#     for i in range(len(test_set)):
-#         aPredict = tree_regressor.predict(test_data[i])
-#         logTest = -1 if test_target[i] == 0 else math.log10(test_target[i])
-#         predTest = -1 if aPredict[0] == 0 else math.log10(aPredict[0])
-#         # logTest = test_target[i]
-#         # predTest = aPredict[0]
-#         acc = abs(logTest - predTest)
-#         acc_sum += acc
-#         if print_result=='y':
-#             print('test area = %8.2f | Predict area= %8.2f | diff = %f' % (test_target[i],aPredict[0], acc))
-#
-#     tree_acc = acc_sum / total
-#     tree_avg_sum += tree_acc
-#     print('\ndecision tree predict diff = %f' % tree_acc)
-#
-#     # kNN
-#     # normalize
-#     knn_train = {}
-#     knn_train = dict(forestfire)
-#     knn_data = []
-#
-#     for d in range(len(forestfire['data'][0])):
-#         feature = []
-#         for r in range(len(forestfire['data'])):
-#             feature.append(forestfire['data'][r][d])
-#         knn_data.append(feature)
-#
-#     for f in range(len(forestfire['data'][0])):
-#         knn_data[f] = normalize([knn_data[f]])
-#
-#     for d in range(len(forestfire['data'][0])):
-#         for r in range(len(forestfire['data'])):
-#             knn_train['data'][r][d] = knn_data[d][0][r]
-#
-#     # kNN regressor
-#     neiRgr = KNeighborsRegressor(n_neighbors=5)
-#     neiRgr.fit(knn_train['data'], knn_train['target'])
-#
-#     # test
-#     if print_result=='y':
-#         print('\n\n----- kNN -----\n')
-#     acc_sum = 0
-#
-#     for i in range(len(test_set)):
-#         aPredict = neiRgr.predict(test_data[i])
-#         logTest = -1 if test_target[i] == 0 else math.log10(test_target[i])
-#         predTest = -1 if aPredict[0] == 0 else math.log10(aPredict[0])
-#         # logTest = test_target[i]
-#         # predTest = aPredict[0]
-#         acc = abs(logTest - predTest)
-#         acc_sum += acc
-#         if print_result=='y':
-#             print('test area = %8.2f | Predict area= %8.2f | diff = %f' % (test_target[i],aPredict[0], acc))
-#
-#     knn_acc = acc_sum / total
-#     knn_avg_sum += knn_acc
-#     print('\nkNN predict diff = %f' % knn_acc)
-#
-#     # naïve Bayes
-#     # gaussian NB model on the continuous part
-#     gNB = GaussianNB()
-#     y_train = np.asarray(forestfire_nb['target'], dtype="|S6")
-#     gNB.fit(forestfire_nb['cont_data'], y_train)
-#
-#     # multinomial NB model on the categorical part with Laplace smoothing
-#     mNB = MultinomialNB(alpha=1.0)
-#     mNB.fit(forestfire_nb['cat_data'], y_train)
-#
-#     # get predict for two NB model
-#     hy_pred = []
-#     for i in range(len(forestfire_nb['cont_data'])):
-#         gp = gNB.predict([forestfire_nb['cont_data'][i]])
-#         mp = mNB.predict([forestfire_nb['cat_data'][i]])
-#         g = float(gp[0].decode('UTF-8'))
-#         m = float(mp[0].decode('UTF-8'))
-#         p = [g,m]
-#         hy_pred.append(p)
-#     hy_pred = array(hy_pred)
-#
-#     hNB = GaussianNB()
-#     hNB.fit(hy_pred, y_train)
-#
-#     # test
-#     if print_result=='y':
-#         print('\n\n----- naïve Bayes -----\n')
-#     acc_sum = 0
-#
-#     for i in range(len(test_set)):
-#         gp = gNB.predict([testNB_cont_data[i]])
-#         mp = mNB.predict([testNB_cat_data[i]])
-#         g = float(gp[0].decode('UTF-8'))
-#         m = float(mp[0].decode('UTF-8'))
-#         p = [g,m]
-#         hp = hNB.predict([p])
-#         h = float(hp[0].decode('UTF-8'))
-#
-#         logTest = -1 if test_target[i] == 0 else math.log10(test_target[i])
-#         predTest = -1 if h == 0 else math.log10(h)
-#         # logTest = test_target[i]
-#         # predTest = h
-#         acc = abs(logTest - predTest)
-#         acc_sum += acc
-#         if print_result=='y':
-#             print('test area = %8.2f | Predict area= %8.2f | diff = %f' % (test_target[i],aPredict[0], acc))
-#
-#     nb_acc = acc_sum / total
-#     nb_avg_sum += nb_acc
-#     print('\nnaïve Bayes predict diff = %f' % nb_acc)
-#     print()
-#
-#     # process line
-#     # print('time = %d' % time)
-#     # print('x = %d' % x)
-#
-#     i_per = math.floor(((x+1)/time)*100)
-#     k = i_per + 1
-#     pl = '['+ '#'*(i_per//2)+' '*((100-k)//2) + ']'
-#     sys.stderr.write('\r'+pl+' (%s%%)'%(i_per))
-#     sys.stderr.flush()
-#     # i_print = math.floor((i/time)*50)
-#     # sys.stderr.write('\r')
-#     # sys.stderr.write("[%-50s] %.2f%%" % ('='*i_print, i_per))
-#     # sys.stderr.flush()
-#
-# 	# end = time.time()
-# 	# elapsed = end - start
-# 	# elapsed = elapsed / 60
-#
-#
-#
-# 	# sys.stdout.write('Time taken: ')
-# 	# sys.stdout.write("%d" % elapsed)
-# 	# sys.stdout.write(' min.\t')
-#
-#
-#
-# # avg test result
-# sys.stderr.write('\n\n\n===== test results =====')
-# sys.stderr.write('\n\ndecision tree avg diff = %f' % (tree_avg_sum / time))
-# sys.stderr.write('\n\nkNN avg diff = %f' % (knn_avg_sum / time))
-# sys.stderr.write('\n\nnaïve Bayes avg diff = %f' % (nb_avg_sum / time))
-# sys.stderr.write('\n\n')
-#
-# print('\n\n===== test results =====')
-# print('\ndecision tree avg diff = %f' % (tree_avg_sum / time))
-# print('\nkNN avg diff = %f' % (knn_avg_sum / time))
-# print('\nnaïve Bayes avg diff = %f' % (nb_avg_sum / time))
-# print()
-#
-#
-# # for i in range(len(test_set)):
-# # gPredict = gNB.predict([testNB_cont_data[i]])
-# # print(gPredict[0].decode('UTF-8'))
-# # print(float(gPredict[0].decode('UTF-8')))
-#     # mPredict = mNB.predict([testNB_cat_data[i]])
-#
-#     # np.hstack((gPredict,mPredict))
-#     # print(gPredict[0].decode('UTF-8'))
-#     # logTest = 0 if test_target[i] == 0 else math.log10(test_target[i])
-#     # predTest = 0 if aPredict[0] == 0 else math.log10(aPredict[0])
-#     # acc = abs(logTest - predTest)
-#     # acc_sum += acc
-#     # print('test area = %8.2f | Predict area= %8.2f | diff = %f' % (test_target[i],aPredict[0], acc))
-#
-# # tree_acc = acc_sum / total
-# # print('\nkNN predict diff = %f' % tree_acc)
+# 列出每個星座前三高的特質
+for i in range(1, 13): # 12 個星座
+    sorted_a = sorted(starSignAttr[getSignName(i)].items(), key=operator.itemgetter(1))
+    sorted_a.reverse()
+    print('---' + getSignName(i) + '---\n')
+    for attr in range(5):
+        print(sorted_a[attr])
+    print('\n\n')
