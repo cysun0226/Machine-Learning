@@ -206,3 +206,19 @@ for i in range(1, 13): # 12 個星座
     for attr in range(5):
         print(sorted_a[attr])
     print('\n\n')
+
+# 每個特質最高與最低的星座
+for a in range(1, 32):
+    attr = {}
+    for s in range(1, 13):
+        attr[getSignName(s)] = starSignAttr[getSignName(s)][getAttrName(a)]
+
+    sorted_attr = sorted(attr.items(), key=operator.itemgetter(1))
+    sorted_attr.reverse()
+
+    print('--- ' + getAttrName(a) + '---')
+    print('\n最高 : ', end='')
+    print(sorted_attr[0])
+    print('\n最低 : ', end='')
+    print(sorted_attr[11])
+    print('\n\n')
