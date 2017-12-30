@@ -67,7 +67,38 @@ def getAttrName(num):
         31: '潔癖'
     }[num]
 
-def calAttr()
+def calAttr(signAttr, signData):
+    for i in range(1, 13): # 12 個星座
+        for a in range(1, 32): # 32 題
+            signAttr[getSignName(i)][getAttrName(a)] /= len(signData[getSignName(i)])
+
+def highestAttr(signAttr, n):
+    for i in range(1, 13): # 12 個星座
+        sorted_a = sorted(signAttr[getSignName(i)].items(), key=operator.itemgetter(1))
+        sorted_a.reverse()
+        print('---' + getSignName(i) + '---\n')
+        for attr in range(n):
+            print(sorted_a[attr])
+        print('\n\n')
+
+def maxAttrSign(signAttr, n):
+    for a in range(1, 32):
+        attr = {}
+        for s in range(1, 13):
+            attr[getSignName(s)] = signAttr[getSignName(s)][getAttrName(a)]
+
+        sorted_attr = sorted(attr.items(), key=operator.itemgetter(1))
+        sorted_attr.reverse()
+
+        print('--- ' + getAttrName(a) + '---')
+        print('\n前三名\n')
+        for i in range(n):
+            print(sorted_attr[i])
+        print('\n後三名\n')
+        for i in range(n):
+            print(sorted_attr[11-i])
+        print('\n\n')
+
 
 starSignData = {}
 starSignAttr = {}
@@ -200,17 +231,19 @@ for row in data:
                 otherSignData[getSignName(i)].append(row)
                 other_total += 1
 
+# 印出各星座資料數量
 for i in range(1, 13):
     print(getSignName(i) + ' = %d' % len(starSignData[getSignName(i)]))
 
 # 計算各星座的特質
-for i in range(1, 13): # 12 個星座
-    for a in range(1, 32): # 32 題
-        starSignAttr[getSignName(i)][getAttrName(a)] /= len(starSignData[getSignName(i)])
+calAttr(starSignAttr, starSignData)
+# for i in range(1, 13): # 12 個星座
+#     for a in range(1, 32): # 32 題
+#         starSignAttr[getSignName(i)][getAttrName(a)] /= len(starSignData[getSignName(i)])
 
 print('\n\n')
 
-# 列出每個星座前三高的特質
+# 列出每個星座前五高的特質
 for i in range(1, 13): # 12 個星座
     sorted_a = sorted(starSignAttr[getSignName(i)].items(), key=operator.itemgetter(1))
     sorted_a.reverse()
@@ -248,37 +281,12 @@ for i in range(1, 13):
     print(getSignName(i) + ' = %d' % len(otherSignData[getSignName(i)]))
 
 # 計算各星座的特質
-for i in range(1, 13): # 12 個星座
-    for a in range(1, 32): # 32 題
-        otherSignAttr[getSignName(i)][getAttrName(a)] /= len(otherSignData[getSignName(i)])
+calAttr(otherSignAttr, otherSignData)
 
 print('\n\n')
 
 # 列出每個星座前三高的特質
-for i in range(1, 13): # 12 個星座
-    sorted_a = sorted(otherSignAttr[getSignName(i)].items(), key=operator.itemgetter(1))
-    sorted_a.reverse()
-    print('---' + getSignName(i) + '---\n')
-    for attr in range(5):
-        print(sorted_a[attr])
-    print('\n\n')
+highestAttr(otherSignAttr, 5)
 
 # 每個特質最高與最低的星座
-for a in range(1, 32):
-    attr = {}
-    for s in range(1, 13):
-        attr[getSignName(s)] = otherSignAttr[getSignName(s)][getAttrName(a)]
-
-    sorted_attr = sorted(attr.items(), key=operator.itemgetter(1))
-    sorted_attr.reverse()
-
-    print('--- ' + getAttrName(a) + '---')
-    print('\n前三名\n')
-    print(sorted_attr[0])
-    print(sorted_attr[1])
-    print(sorted_attr[2])
-    print('\n後三名\n')
-    print(sorted_attr[11])
-    print(sorted_attr[10])
-    print(sorted_attr[9])
-    print('\n\n')
+maxAttrSign(otherSignAttr, 3)
