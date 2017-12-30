@@ -67,9 +67,12 @@ def getAttrName(num):
         31: '潔癖'
     }[num]
 
+def calAttr()
 
 starSignData = {}
 starSignAttr = {}
+otherSignData = {}
+otherSignAttr = {}
 
 a = {}
 for i in range(1, 32):
@@ -78,6 +81,8 @@ for i in range(1, 32):
 for i in range(1, 13):
     starSignData[getSignName(i)] = []
     starSignAttr[getSignName(i)] = dict(a)
+    otherSignData[getSignName(i)] = []
+    otherSignAttr[getSignName(i)] = dict(a)
 
 # main
 tree_avg_sum = 0
@@ -107,6 +112,7 @@ del feature_names[len(feature_names)-2] # remove commands
 print('\n\n===== star-sign data set =====\n')
 print('資料總數 = %d 份\n' % len(lines))
 total_num = len(lines)
+other_total = 0
 # print('train_set = %d' % math.floor(0.9*len(lines)))
 # print('test_set = %d' % (len(lines) - math.floor(0.1*len(lines))))
 
@@ -142,6 +148,7 @@ for line in lines:
         # print('line[%d] has incorrect element num' % i)
         total_num -= 1
         continue
+
     d = {}
     d['分析對象'] = line[0]
     d['星座'] = line[1]
@@ -183,10 +190,15 @@ for line in lines:
 for row in data:
     for i in range(1, 32):
         starSignAttr[row['星座']][getAttrName(i)] += row[getAttrName(i)]
+        if row['分析對象'] == '他人':
+            otherSignAttr[row['星座']][getAttrName(i)] += row[getAttrName(i)]
 
     for i in range(1, 13):
         if(row['星座'] == getSignName(i)):
             starSignData[getSignName(i)].append(row)
+            if row['分析對象'] == '他人':
+                otherSignData[getSignName(i)].append(row)
+                other_total += 1
 
 for i in range(1, 13):
     print(getSignName(i) + ' = %d' % len(starSignData[getSignName(i)]))
@@ -217,8 +229,56 @@ for a in range(1, 32):
     sorted_attr.reverse()
 
     print('--- ' + getAttrName(a) + '---')
-    print('\n最高 : ', end='')
+    print('\n前三名\n')
     print(sorted_attr[0])
-    print('\n最低 : ', end='')
+    print(sorted_attr[1])
+    print(sorted_attr[2])
+    print('\n後三名\n')
     print(sorted_attr[11])
+    print(sorted_attr[10])
+    print(sorted_attr[9])
+    print('\n\n')
+
+# 他人眼中的星座
+print('\n=== 他人眼中的xx座 ===\n')
+
+print('資料總數 = %d 份\n' % other_total)
+
+for i in range(1, 13):
+    print(getSignName(i) + ' = %d' % len(otherSignData[getSignName(i)]))
+
+# 計算各星座的特質
+for i in range(1, 13): # 12 個星座
+    for a in range(1, 32): # 32 題
+        otherSignAttr[getSignName(i)][getAttrName(a)] /= len(otherSignData[getSignName(i)])
+
+print('\n\n')
+
+# 列出每個星座前三高的特質
+for i in range(1, 13): # 12 個星座
+    sorted_a = sorted(otherSignAttr[getSignName(i)].items(), key=operator.itemgetter(1))
+    sorted_a.reverse()
+    print('---' + getSignName(i) + '---\n')
+    for attr in range(5):
+        print(sorted_a[attr])
+    print('\n\n')
+
+# 每個特質最高與最低的星座
+for a in range(1, 32):
+    attr = {}
+    for s in range(1, 13):
+        attr[getSignName(s)] = otherSignAttr[getSignName(s)][getAttrName(a)]
+
+    sorted_attr = sorted(attr.items(), key=operator.itemgetter(1))
+    sorted_attr.reverse()
+
+    print('--- ' + getAttrName(a) + '---')
+    print('\n前三名\n')
+    print(sorted_attr[0])
+    print(sorted_attr[1])
+    print(sorted_attr[2])
+    print('\n後三名\n')
+    print(sorted_attr[11])
+    print(sorted_attr[10])
+    print(sorted_attr[9])
     print('\n\n')
