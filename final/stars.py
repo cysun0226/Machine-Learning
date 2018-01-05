@@ -155,6 +155,7 @@ print('\n\n===== star-sign data set =====\n')
 print('資料總數 = %d 份\n' % len(lines))
 total_num = len(lines)
 other_total = 0
+
 # print('train_set = %d' % math.floor(0.9*len(lines)))
 # print('test_set = %d' % (len(lines) - math.floor(0.1*len(lines))))
 
@@ -228,27 +229,6 @@ for line in lines:
     data.append(d)
     i += 1
 
-# 挑 training set
-shuffle(data)
-train_data = []
-train_target = []
-for i in range(TRAIN_NUM):
-    train_row = []
-    for a in range(1, 32):
-        train_row.append(data[i][getAttrName(a)])
-    train_data.append(train_row)
-    train_target.append(data[i]['星座'])
-
-# test set
-test_data = []
-test_target = []
-for i in range(TRAIN_NUM+1, total_num-1):
-    r = []
-    for a in range(1, 32):
-        r.append(data[i][getAttrName(a)])
-    test_data.append(r)
-    test_target.append(data[i]['星座'])
-
 # 將資料依星座分類並加總特質
 for row in data:
     for i in range(1, 32):
@@ -262,40 +242,91 @@ for row in data:
             if row['分析對象'] == '他人':
                 otherSignData[getSignName(i)].append(row)
                 other_total += 1
+# test
+test_num = total_num - TRAIN_NUM - 2
+print('\n測試資料 = %d 筆\n' % test_num)
 
 # 印出各星座資料數量
 for i in range(1, 13):
     print(getSignName(i) + ' = %d' % len(starSignData[getSignName(i)]))
 
-# decision tree
-dTree = tree.DecisionTreeClassifier()
-dTree = dTree.fit(train_data, train_target)
 
-# test
-test_num = total_num - TRAIN_NUM - 2
-correct = 0
-print('\n\n===== dTree =====')
-print('\n測試資料: %d 筆\n' % test_num)
+# 輸入執行次數
+time = int(input("\nexecute time: "))
+for x in range(time):
+    print('\n\n===== test %d =====' % (x+1))
 
-for i in range(test_num):
-    predict = dTree.predict([test_data[i]])
-    if predict == test_target[i]:
-        correct += 1
+    # 挑 training set
+    shuffle(data)
+    train_data = []
+    train_target = []
+    for i in range(TRAIN_NUM):
+        train_row = []
+        for a in range(1, 32):
+            train_row.append(data[i][getAttrName(a)])
+        train_data.append(train_row)
+        train_target.append(data[i]['星座'])
 
-acc = correct / test_num
-tree_avg_sum += acc
-print('dTree accuracy = %f' % acc)
+    # test set
+    test_data = []
+    test_target = []
+    for i in range(TRAIN_NUM+1, total_num-1):
+        r = []
+        for a in range(1, 32):
+            r.append(data[i][getAttrName(a)])
+        test_data.append(r)
+        test_target.append(data[i]['星座'])
 
-# # KNN
-# knn = KNeighborsClassifier(n_neighbors=5, algorithm="kd_tree").fit(train_data, train_target)
-# print('\n\n===== KNN =====')
-# print('\n測試資料: %d 筆\n' % test_num)
-#
-# for i in range(test_num):
-#     predict = dTree.predict([test_data[i]])
-#     if predict == test_target[i]:
-#         correct += 1
-#
-# acc = correct / test_num
-# tree_avg_sum += acc
-# print('\ndecision tree accuracy = %f' % acc)
+
+
+    # decision tree
+    dTree = tree.DecisionTreeClassifier()
+    dTree = dTree.fit(train_data, train_target)
+    # print('\n--- dTree ---')
+    correct = 0
+
+    for i in range(test_num):
+        predict = dTree.predict([test_data[i]])
+        if predict == test_target[i]:
+            correct += 1
+
+    acc = correct / test_num
+    tree_avg_sum += acc
+    print('\ndTree accuracy = %f' % acc)
+
+    # KNN
+    correct = 0
+    knn = KNeighborsClassifier(n_neighbors=5, algorithm="kd_tree").fit(train_data, train_target)
+    # print('\n\n--- KNN ---')
+
+    for i in range(test_num):
+        predict = knn.predict([test_data[i]])
+        if predict == test_target[i]:
+            correct += 1
+
+    acc = correct / test_num
+    knn_avg_sum += acc
+    print('\nknn accuracy = %f' % acc)
+
+    # naïve Bayes
+    # print('\n\n--- naïve Bayes ---')
+    correct = 0
+    nb = GaussianNB()
+    nb.fit(train_data, train_target)
+
+    for i in range(test_num):
+        predict = nb.predict([test_data[i]])
+        if predict == test_target[i]:
+            correct += 1
+
+    acc = correct / test_num
+    nb_avg_sum += acc
+    print('\nnaïve Bayes accuracy = %f' % acc)
+
+# avg test result
+print('\n\n===== test results =====')
+print('\nexecute time: %d\n' % time)
+print('\ndecision tree avg accuracy = %f' % (tree_avg_sum / time))
+print('\nkNN avg accuracy = %f' % (knn_avg_sum / time))
+print('\nnaïve Bayes avg accuracy = %f' % (nb_avg_sum / time))
+print()
