@@ -3,6 +3,7 @@ import math
 import sys
 import numpy as np
 from numpy import array
+from sklearn import tree
 from random import shuffle
 import operator
 
@@ -12,6 +13,7 @@ from sklearn.naive_bayes import GaussianNB
 # from sklearn.preprocessing import normalize
 
 star_file = str(sys.argv[1])
+TRAIN_NUM = 10000
 lines = []
 data = []
 target = []
@@ -226,6 +228,27 @@ for line in lines:
     data.append(d)
     i += 1
 
+# 挑 training set
+shuffle(data)
+train_data = []
+train_target = []
+for i in range(TRAIN_NUM):
+    train_row = []
+    for a in range(1, 32):
+        train_row.append(data[i][getAttrName(a)])
+    train_data.append(train_row)
+    train_target.append(data[i]['星座'])
+
+# test set
+test_data = []
+test_target = []
+for i in range(TRAIN_NUM+1, total_num-1):
+    r = []
+    for a in range(1, 32):
+        r.append(data[i][getAttrName(a)])
+    test_data.append(r)
+    test_target.append(data[i]['星座'])
+
 # 將資料依星座分類並加總特質
 for row in data:
     for i in range(1, 32):
@@ -244,32 +267,5 @@ for row in data:
 for i in range(1, 13):
     print(getSignName(i) + ' = %d' % len(starSignData[getSignName(i)]))
 
-# 計算各星座的特質
-calAttr(starSignAttr, starSignData)
-
-print('\n\n')
-
-# 列出每個星座前五高的特質
-highestAttr(starSignAttr, 5)
-
-# 每個特質最高與最低的星座
-maxAttrSign(starSignAttr, 3)
-
-# 他人眼中的星座
-print('\n=== 他人眼中的xx座 ===\n')
-
-print('資料總數 = %d 份\n' % other_total)
-
-for i in range(1, 13):
-    print(getSignName(i) + ' = %d' % len(otherSignData[getSignName(i)]))
-
-# 計算各星座的特質
-calAttr(otherSignAttr, otherSignData)
-
-print('\n\n')
-
-# 列出每個星座前三高的特質
-highestAttr(otherSignAttr, 5)
-
-# 每個特質最高與最低的星座
-maxAttrSign(otherSignAttr, 3)
+# decision tree
+# dTree = 
