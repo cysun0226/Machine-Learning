@@ -67,20 +67,29 @@ def getAttrName(num):
         31: '潔癖'
     }[num]
 
+# 計算各星座的特質
 def calAttr(signAttr, signData):
     for i in range(1, 13): # 12 個星座
         for a in range(1, 32): # 32 題
             signAttr[getSignName(i)][getAttrName(a)] /= len(signData[getSignName(i)])
 
+# 列出每個星座前n高的特質
 def highestAttr(signAttr, n):
     for i in range(1, 13): # 12 個星座
         sorted_a = sorted(signAttr[getSignName(i)].items(), key=operator.itemgetter(1))
         sorted_a.reverse()
         print('---' + getSignName(i) + '---\n')
-        for attr in range(n):
+        a = 0
+        for attr in range(32):
+            if (sorted_a[attr][0] == '專情') or (sorted_a[attr][0] == '重視友情'):
+                continue
+            a += 1
             print(sorted_a[attr])
+            if a == 5:
+                break
         print('\n\n')
 
+# 每個特質最高與最低的n個星座
 def maxAttrSign(signAttr, n):
     for a in range(1, 32):
         attr = {}
