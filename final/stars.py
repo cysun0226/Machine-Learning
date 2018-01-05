@@ -13,7 +13,7 @@ from sklearn.naive_bayes import GaussianNB
 # from sklearn.preprocessing import normalize
 
 star_file = str(sys.argv[1])
-TRAIN_NUM = 10000
+TRAIN_NUM = 9000
 lines = []
 data = []
 target = []
@@ -268,4 +268,34 @@ for i in range(1, 13):
     print(getSignName(i) + ' = %d' % len(starSignData[getSignName(i)]))
 
 # decision tree
-# dTree = 
+dTree = tree.DecisionTreeClassifier()
+dTree = dTree.fit(train_data, train_target)
+
+# test
+test_num = total_num - TRAIN_NUM - 2
+correct = 0
+print('\n\n===== dTree =====')
+print('\n測試資料: %d 筆\n' % test_num)
+
+for i in range(test_num):
+    predict = dTree.predict([test_data[i]])
+    if predict == test_target[i]:
+        correct += 1
+
+acc = correct / test_num
+tree_avg_sum += acc
+print('dTree accuracy = %f' % acc)
+
+# # KNN
+# knn = KNeighborsClassifier(n_neighbors=5, algorithm="kd_tree").fit(train_data, train_target)
+# print('\n\n===== KNN =====')
+# print('\n測試資料: %d 筆\n' % test_num)
+#
+# for i in range(test_num):
+#     predict = dTree.predict([test_data[i]])
+#     if predict == test_target[i]:
+#         correct += 1
+#
+# acc = correct / test_num
+# tree_avg_sum += acc
+# print('\ndecision tree accuracy = %f' % acc)
