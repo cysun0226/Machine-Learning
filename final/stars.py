@@ -10,6 +10,7 @@ import operator
 from sklearn import tree
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
+from sklearn.svm import LinearSVC
 # from sklearn.preprocessing import normalize
 
 star_file = str(sys.argv[1])
@@ -130,6 +131,7 @@ for i in range(1, 13):
 tree_avg_sum = 0
 knn_avg_sum = 0
 nb_avg_sum = 0
+svc_avg_sum = 0
 
 # read star.csv
 with open(star_file, newline='') as csvfile:
@@ -155,28 +157,6 @@ print('\n\n===== star-sign data set =====\n')
 print('資料總數 = %d 份\n' % len(lines))
 total_num = len(lines)
 other_total = 0
-
-# print('train_set = %d' % math.floor(0.9*len(lines)))
-# print('test_set = %d' % (len(lines) - math.floor(0.1*len(lines))))
-
-# sys.stderr.write("\nexecute time: ")
-# time = int(input("\nexecute time: "))
-# sys.stderr.write("\nprint detailed results?(y/n): ")
-# print_result = input("print detailed results?(y/n): ")
-# sys.stderr.write("\n\n--- process status ---\n\n")
-
-
-# for x in range(time):
-#     print('\n\n===== test %d =====' % (x+1))
-#
-#     # shuffle and pick the training set
-#     lines = lines[1:len(lines)]
-#     shuffle(lines)
-#     train_set = lines[0:math.floor(0.7*len(lines))]
-#     test_set = lines[math.floor(0.7*len(lines)):len(lines)]
-#     day_list = []
-#     month_list = []
-#
 
 # lines
 del lines[0]
@@ -323,10 +303,27 @@ for x in range(time):
     nb_avg_sum += acc
     print('\nnaïve Bayes accuracy = %f' % acc)
 
+    # SVM
+    svc = LinearSVC(random_state=0)
+    svc.fit(train_data, train_target)
+    correct = 0
+
+    for i in range(test_num):
+        predict = svc.predict([test_data[i]])
+        if predict == test_target[i]:
+            correct += 1
+
+    acc = correct / test_num
+    svc_avg_sum += acc
+    print('\nSVM accuracy = %f' % acc)
+
+
+
 # avg test result
 print('\n\n===== test results =====')
 print('\nexecute time: %d\n' % time)
 print('\ndecision tree avg accuracy = %f' % (tree_avg_sum / time))
 print('\nkNN avg accuracy = %f' % (knn_avg_sum / time))
 print('\nnaïve Bayes avg accuracy = %f' % (nb_avg_sum / time))
+print('\nSVM avg accuracy = %f' % (svc_avg_sum / time))
 print()
