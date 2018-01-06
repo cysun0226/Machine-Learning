@@ -11,6 +11,7 @@ from sklearn import tree
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import LinearSVC
+
 # from sklearn.preprocessing import normalize
 
 star_file = str(sys.argv[1])
@@ -116,10 +117,16 @@ starSignData = {}
 starSignAttr = {}
 otherSignData = {}
 otherSignAttr = {}
+# attrData = {}
 
 a = {}
+d = {}
 for i in range(1, 32):
     a[getAttrName(i)] = 0
+    d[getAttrName(i)] = []
+
+attrData = dict(d)
+stddev = dict(a)
 
 for i in range(1, 13):
     starSignData[getSignName(i)] = []
@@ -209,10 +216,11 @@ for line in lines:
     data.append(d)
     i += 1
 
-# 將資料依星座分類並加總特質
+# 將資料依星座、特質分類並加總特質
 for row in data:
     for i in range(1, 32):
         starSignAttr[row['星座']][getAttrName(i)] += row[getAttrName(i)]
+        attrData[getAttrName(i)].append(row[getAttrName(i)])
         if row['分析對象'] == '他人':
             otherSignAttr[row['星座']][getAttrName(i)] += row[getAttrName(i)]
 
@@ -229,6 +237,22 @@ print('\n測試資料 = %d 筆\n' % test_num)
 # 印出各星座資料數量
 for i in range(1, 13):
     print(getSignName(i) + ' = %d' % len(starSignData[getSignName(i)]))
+
+
+# 計算各特質標準差
+
+print('\n===== 各特質標準差 =====\n')
+for i in range(1, 32):
+    sd = np.std(array(attrData[getAttrName(i)]))
+    stddev[getAttrName(i)] = sd
+
+sorted_stddev = sorted(stddev.items(), key=operator.itemgetter(1))
+sorted_stddev.reverse()
+
+for i in range(0, 31):
+    print(sorted_stddev[i])
+
+
 
 
 # 輸入執行次數
