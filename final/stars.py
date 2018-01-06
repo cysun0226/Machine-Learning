@@ -8,6 +8,7 @@ from random import shuffle
 import operator
 
 from sklearn import tree
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import LinearSVC
@@ -15,7 +16,7 @@ from sklearn.svm import LinearSVC
 # from sklearn.preprocessing import normalize
 
 star_file = str(sys.argv[1])
-TRAIN_NUM = 9000
+TRAIN_NUM = 800
 lines = []
 data = []
 target = []
@@ -117,6 +118,7 @@ starSignData = {}
 starSignAttr = {}
 otherSignData = {}
 otherSignAttr = {}
+train_count = {}
 # attrData = {}
 
 a = {}
@@ -133,6 +135,7 @@ for i in range(1, 13):
     starSignAttr[getSignName(i)] = dict(a)
     otherSignData[getSignName(i)] = []
     otherSignAttr[getSignName(i)] = dict(a)
+    train_count[getSignName(i)] = 0
 
 # main
 tree_avg_sum = 0
@@ -231,8 +234,8 @@ for row in data:
                 otherSignData[getSignName(i)].append(row)
                 other_total += 1
 # test
-test_num = total_num - TRAIN_NUM - 2
-print('\n測試資料 = %d 筆\n' % test_num)
+# test_num = total_num - TRAIN_NUM - 2
+# print('\n測試資料 = %d 筆\n' % test_num)
 
 # 印出各星座資料數量
 for i in range(1, 13):
@@ -256,32 +259,35 @@ for i in range(0, 31):
 
 
 # 輸入執行次數
-time = int(input("\nexecute time: "))
+print('\n===== testing =====\n')
+time = int(input("execute time: "))
+
 for x in range(time):
-    print('\n\n===== test %d =====' % (x+1))
+    print('\n\n--- test %d ---' % (x+1))
 
     # 挑 training set
     shuffle(data)
     train_data = []
     train_target = []
-    for i in range(TRAIN_NUM):
-        train_row = []
-        for a in range(1, 32):
-            train_row.append(data[i][getAttrName(a)])
-        train_data.append(train_row)
-        train_target.append(data[i]['星座'])
-
-    # test set
     test_data = []
     test_target = []
-    for i in range(TRAIN_NUM+1, total_num-1):
+    test_num = 0
+    for i in range(1, 13):
+        train_count[getSignName(i)] = 0
+
+    for i in range(total_num-1):
         r = []
         for a in range(1, 32):
+            # if(getAttrName(a) != '重視友情'):
             r.append(data[i][getAttrName(a)])
-        test_data.append(r)
-        test_target.append(data[i]['星座'])
-
-
+        if train_count[data[i]['星座']] < TRAIN_NUM:
+            train_data.append(r)
+            train_target.append(data[i]['星座'])
+        else:
+            test_data.append(r)
+            test_target.append(data[i]['星座'])
+            test_num += 1
+        train_count[data[i]['星座']] += 1
 
     # decision tree
     dTree = tree.DecisionTreeClassifier()
@@ -344,10 +350,18 @@ for x in range(time):
 
 
 # avg test result
+result_file = open( str(sys.argv[2]), 'w')
+
 print('\n\n===== test results =====')
+result_file.write('\n\n===== test results =====')
 print('\nexecute time: %d\n' % time)
+result_file.write('\nexecute time: %d\n' % time)
 print('\ndecision tree avg accuracy = %f' % (tree_avg_sum / time))
+result_file.write('\ndecision tree avg accuracy = %f' % (tree_avg_sum / time))
 print('\nkNN avg accuracy = %f' % (knn_avg_sum / time))
+result_file.write('\nkNN avg accuracy = %f' % (knn_avg_sum / time))
 print('\nnaïve Bayes avg accuracy = %f' % (nb_avg_sum / time))
+result_file.write('\nnaïve Bayes avg accuracy = %f' % (nb_avg_sum / time))
 print('\nSVM avg accuracy = %f' % (svc_avg_sum / time))
+result_file.write('\nSVM avg accuracy = %f' % (svc_avg_sum / time))
 print()
