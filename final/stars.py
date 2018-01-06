@@ -111,18 +111,25 @@ def maxAttrSign(signAttr, n):
 
 starSignData = {}
 starSignAttr = {}
+starData = {}
+stddev = {}
 otherSignData = {}
 otherSignAttr = {}
 
 a = {}
+li = {}
 for i in range(1, 32):
     a[getAttrName(i)] = 0
+    li[getAttrName(i)] = list()
 
 for i in range(1, 13):
     starSignData[getSignName(i)] = []
     starSignAttr[getSignName(i)] = dict(a)
     otherSignData[getSignName(i)] = []
     otherSignAttr[getSignName(i)] = dict(a)
+    stddev[getSignName(i)] = dict(a)
+    starData[getSignName(i)] = dict(li)
+
 
 # main
 tree_avg_sum = 0
@@ -153,27 +160,6 @@ print('\n\n===== star-sign data set =====\n')
 print('資料總數 = %d 份\n' % len(lines))
 total_num = len(lines)
 other_total = 0
-# print('train_set = %d' % math.floor(0.9*len(lines)))
-# print('test_set = %d' % (len(lines) - math.floor(0.1*len(lines))))
-
-# sys.stderr.write("\nexecute time: ")
-# time = int(input("\nexecute time: "))
-# sys.stderr.write("\nprint detailed results?(y/n): ")
-# print_result = input("print detailed results?(y/n): ")
-# sys.stderr.write("\n\n--- process status ---\n\n")
-
-
-# for x in range(time):
-#     print('\n\n===== test %d =====' % (x+1))
-#
-#     # shuffle and pick the training set
-#     lines = lines[1:len(lines)]
-#     shuffle(lines)
-#     train_set = lines[0:math.floor(0.7*len(lines))]
-#     test_set = lines[math.floor(0.7*len(lines)):len(lines)]
-#     day_list = []
-#     month_list = []
-#
 
 # lines
 del lines[0]
@@ -230,6 +216,7 @@ for line in lines:
 for row in data:
     for i in range(1, 32):
         starSignAttr[row['星座']][getAttrName(i)] += row[getAttrName(i)]
+        starData[row['星座']][getAttrName(i)].append(row[getAttrName(i)])
         if row['分析對象'] == '他人':
             otherSignAttr[row['星座']][getAttrName(i)] += row[getAttrName(i)]
 
@@ -240,6 +227,10 @@ for row in data:
                 otherSignData[getSignName(i)].append(row)
                 other_total += 1
 
+for row in data:
+    for i in range(1, 32):
+        starData[row['星座']][getAttrName(i)].append(row[getAttrName(i)])
+
 # 印出各星座資料數量
 for i in range(1, 13):
     print(getSignName(i) + ' = %d' % len(starSignData[getSignName(i)]))
@@ -247,29 +238,50 @@ for i in range(1, 13):
 # 計算各星座的特質
 calAttr(starSignAttr, starSignData)
 
-print('\n\n')
-
-# 列出每個星座前五高的特質
-highestAttr(starSignAttr, 5)
-
-# 每個特質最高與最低的星座
-maxAttrSign(starSignAttr, 3)
-
-# 他人眼中的星座
-print('\n=== 他人眼中的xx座 ===\n')
-
-print('資料總數 = %d 份\n' % other_total)
+# 計算標準差
+print(starData['雙魚座']['樂觀'])
+print(starData['射手座']['樂觀'])
 
 for i in range(1, 13):
-    print(getSignName(i) + ' = %d' % len(otherSignData[getSignName(i)]))
+    for a in range(1, 32):
+        # np.std(array(starData[getSignName(i)][getAttrName(a)]))
+        stddev[getSignName(i)][getAttrName(a)] = np.std(array(starData[getSignName(i)][getAttrName(a)]))
 
-# 計算各星座的特質
-calAttr(otherSignAttr, otherSignData)
+# 列出每個星座的標準差
+print('\n\n===== 標準差 =====\n\n')
+# for s in range(1, 13):
+#     print('- ' + getSignName(s) + ' -\n')
+    # print(stddev[getSignName(s)])
+    # sorted_attr = sorted(stddev[getSignName(s)].items(), key=operator.itemgetter(1))
+    # sorted_attr.reverse()
+    # for a in range(0, 31):
+    #     print(sorted_attr[a])
+    # print('\n\n')
+
 
 print('\n\n')
 
-# 列出每個星座前三高的特質
-highestAttr(otherSignAttr, 5)
-
-# 每個特質最高與最低的星座
-maxAttrSign(otherSignAttr, 3)
+# # 列出每個星座前五高的特質
+# highestAttr(starSignAttr, 5)
+#
+# # 每個特質最高與最低的星座
+# maxAttrSign(starSignAttr, 3)
+#
+# # 他人眼中的星座
+# print('\n=== 他人眼中的xx座 ===\n')
+#
+# print('資料總數 = %d 份\n' % other_total)
+#
+# for i in range(1, 13):
+#     print(getSignName(i) + ' = %d' % len(otherSignData[getSignName(i)]))
+#
+# # 計算各星座的特質
+# calAttr(otherSignAttr, otherSignData)
+#
+# print('\n\n')
+#
+# # 列出每個星座前三高的特質
+# highestAttr(otherSignAttr, 5)
+#
+# # 每個特質最高與最低的星座
+# maxAttrSign(otherSignAttr, 3)
