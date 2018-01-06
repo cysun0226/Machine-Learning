@@ -142,6 +142,7 @@ tree_avg_sum = 0
 knn_avg_sum = 0
 nb_avg_sum = 0
 svc_avg_sum = 0
+rf_avg_sum = 0
 
 # read star.csv
 with open(star_file, newline='') as csvfile:
@@ -244,7 +245,7 @@ for i in range(1, 13):
 
 # 計算各特質標準差
 
-print('\n===== 各特質標準差 =====\n')
+# print('\n===== 各特質標準差 =====\n')
 for i in range(1, 32):
     sd = np.std(array(attrData[getAttrName(i)]))
     stddev[getAttrName(i)] = sd
@@ -252,8 +253,8 @@ for i in range(1, 32):
 sorted_stddev = sorted(stddev.items(), key=operator.itemgetter(1))
 sorted_stddev.reverse()
 
-for i in range(0, 31):
-    print(sorted_stddev[i])
+# for i in range(0, 31):
+#     print(sorted_stddev[i])
 
 
 
@@ -303,6 +304,22 @@ for x in range(time):
     acc = correct / test_num
     tree_avg_sum += acc
     print('\ndTree accuracy = %f' % acc)
+
+    # random forest
+    rf = RandomForestClassifier(random_state=0)
+    rf.fit(train_data, train_target)
+    # print('\n--- dTree ---')
+    correct = 0
+
+    for i in range(test_num):
+        predict = rf.predict([test_data[i]])
+        if predict == test_target[i]:
+            correct += 1
+
+    acc = correct / test_num
+    rf_avg_sum += acc
+    print('\nrandom forest accuracy = %f' % acc)
+
 
     # KNN
     correct = 0
@@ -358,6 +375,8 @@ print('\nexecute time: %d\n' % time)
 result_file.write('\nexecute time: %d\n' % time)
 print('\ndecision tree avg accuracy = %f' % (tree_avg_sum / time))
 result_file.write('\ndecision tree avg accuracy = %f' % (tree_avg_sum / time))
+print('\nrandom forest avg accuracy = %f' % (rf_avg_sum / time))
+result_file.write('\nrandom forest avg accuracy = %f' % (rf_avg_sum / time))
 print('\nkNN avg accuracy = %f' % (knn_avg_sum / time))
 result_file.write('\nkNN avg accuracy = %f' % (knn_avg_sum / time))
 print('\nnaïve Bayes avg accuracy = %f' % (nb_avg_sum / time))
