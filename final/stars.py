@@ -12,6 +12,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import LinearSVC
+from sklearn.decomposition import PCA
 
 # from sklearn.preprocessing import normalize
 
@@ -290,6 +291,17 @@ for x in range(time):
             test_num += 1
         train_count[data[i]['星座']] += 1
 
+    # PCA
+    print('\n===== PCA =====\n')
+    pca = PCA(n_components = 20)
+    pca.fit(train_data)
+    train_data = pca.transform(train_data)
+    test_data = pca.transform(test_data)
+
+    # print(pca.explained_variance_ratio_)
+    # print(pca.singular_values_)
+
+
     # decision tree
     dTree = tree.DecisionTreeClassifier()
     dTree = dTree.fit(train_data, train_target)
@@ -323,7 +335,7 @@ for x in range(time):
 
     # KNN
     correct = 0
-    knn = KNeighborsClassifier(n_neighbors=5, algorithm="kd_tree").fit(train_data, train_target)
+    knn = KNeighborsClassifier(n_neighbors = 200, algorithm="kd_tree").fit(train_data, train_target)
     # print('\n\n--- KNN ---')
 
     for i in range(test_num):
