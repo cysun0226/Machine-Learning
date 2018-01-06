@@ -298,7 +298,7 @@ for x in range(time):
         train_count[data[i]['星座']] += 1
 
     # KNN
-    for k in range(1, 500+1):
+    for k in range(1, 1000+1):
         correct = 0
         knn = KNeighborsClassifier(n_neighbors=k, algorithm="kd_tree").fit(train_data, train_target)
         # print('\n\n--- KNN ---')
@@ -319,6 +319,6 @@ for x in range(time):
 # avg test result
 # plt.plot(k_list, acc_list, '-o')
 plt.plot(k_list, acc_list)
-plt.savefig('knn_500.png')
+plt.savefig('knn_1000.png')
 plt.show()
 print()
