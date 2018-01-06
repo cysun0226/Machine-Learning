@@ -318,7 +318,7 @@ for x in range(time):
 
 # avg test result
 # plt.plot(k_list, acc_list, '-o')
-plt.plot(k_list, acc_list, '-o')
+plt.plot(k_list, acc_list)
 plt.savefig('knn_500.png')
 plt.show()
 print()
