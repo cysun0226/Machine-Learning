@@ -293,7 +293,7 @@ for x in range(time):
 
     # PCA
     # print('\nPCA = %d' % (31-x))
-    pca = PCA(n_components = 10)
+    pca = PCA(n_components = 20)
     # print(train_data[0])
     pca.fit(train_data)
     train_data = pca.transform(train_data)
