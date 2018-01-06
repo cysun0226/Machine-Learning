@@ -246,7 +246,7 @@ for i in range(1, 13):
 
 # 計算各特質標準差
 
-# print('\n===== 各特質標準差 =====\n')
+print('\n===== 各特質標準差 =====\n')
 for i in range(1, 32):
     sd = np.std(array(attrData[getAttrName(i)]))
     stddev[getAttrName(i)] = sd
@@ -254,8 +254,8 @@ for i in range(1, 32):
 sorted_stddev = sorted(stddev.items(), key=operator.itemgetter(1))
 sorted_stddev.reverse()
 
-# for i in range(0, 31):
-#     print(sorted_stddev[i])
+for i in range(0, 31):
+    print(sorted_stddev[i])
 
 
 
@@ -292,13 +292,13 @@ for x in range(time):
         train_count[data[i]['星座']] += 1
 
     # PCA
-    print('\n===== PCA =====\n')
+    # print('\nPCA = %d' % (31-x))
     pca = PCA(n_components = 10)
-    print(train_data[0])
+    # print(train_data[0])
     pca.fit(train_data)
     train_data = pca.transform(train_data)
     test_data = pca.transform(test_data)
-    print(train_data[0])
+    # print(train_data[0])
 
     # print(pca.explained_variance_ratio_)
     # print(pca.singular_values_)
