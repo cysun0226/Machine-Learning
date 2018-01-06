@@ -293,10 +293,12 @@ for x in range(time):
 
     # PCA
     print('\n===== PCA =====\n')
-    pca = PCA(n_components = 20)
+    pca = PCA(n_components = 10)
+    print(train_data[0])
     pca.fit(train_data)
     train_data = pca.transform(train_data)
     test_data = pca.transform(test_data)
+    print(train_data[0])
 
     # print(pca.explained_variance_ratio_)
     # print(pca.singular_values_)
