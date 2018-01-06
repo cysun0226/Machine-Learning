@@ -6,6 +6,10 @@ from numpy import array
 from sklearn import tree
 from random import shuffle
 import operator
+# import matplotlib
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier
@@ -260,6 +264,9 @@ sorted_stddev.reverse()
 
 
 # 輸入執行次數
+acc_list = []
+k_list = []
+
 print('\n===== testing =====\n')
 time = int(input("execute time: "))
 
@@ -290,97 +297,28 @@ for x in range(time):
             test_num += 1
         train_count[data[i]['星座']] += 1
 
-    # decision tree
-    dTree = tree.DecisionTreeClassifier()
-    dTree = dTree.fit(train_data, train_target)
-    # print('\n--- dTree ---')
-    correct = 0
-
-    for i in range(test_num):
-        predict = dTree.predict([test_data[i]])
-        if predict == test_target[i]:
-            correct += 1
-
-    acc = correct / test_num
-    tree_avg_sum += acc
-    print('\ndTree accuracy = %f' % acc)
-
-    # random forest
-    rf = RandomForestClassifier(random_state=0)
-    rf.fit(train_data, train_target)
-    # print('\n--- dTree ---')
-    correct = 0
-
-    for i in range(test_num):
-        predict = rf.predict([test_data[i]])
-        if predict == test_target[i]:
-            correct += 1
-
-    acc = correct / test_num
-    rf_avg_sum += acc
-    print('\nrandom forest accuracy = %f' % acc)
-
-
     # KNN
-    correct = 0
-    knn = KNeighborsClassifier(n_neighbors=5, algorithm="kd_tree").fit(train_data, train_target)
-    # print('\n\n--- KNN ---')
+    for k in range(1, 500+1):
+        correct = 0
+        knn = KNeighborsClassifier(n_neighbors=k, algorithm="kd_tree").fit(train_data, train_target)
+        # print('\n\n--- KNN ---')
 
-    for i in range(test_num):
-        predict = knn.predict([test_data[i]])
-        if predict == test_target[i]:
-            correct += 1
+        for i in range(test_num):
+            predict = knn.predict([test_data[i]])
+            if predict == test_target[i]:
+                correct += 1
 
-    acc = correct / test_num
-    knn_avg_sum += acc
-    print('\nknn accuracy = %f' % acc)
-
-    # naïve Bayes
-    # print('\n\n--- naïve Bayes ---')
-    correct = 0
-    nb = GaussianNB()
-    nb.fit(train_data, train_target)
-
-    for i in range(test_num):
-        predict = nb.predict([test_data[i]])
-        if predict == test_target[i]:
-            correct += 1
-
-    acc = correct / test_num
-    nb_avg_sum += acc
-    print('\nnaïve Bayes accuracy = %f' % acc)
-
-    # SVM
-    svc = LinearSVC(random_state=0)
-    svc.fit(train_data, train_target)
-    correct = 0
-
-    for i in range(test_num):
-        predict = svc.predict([test_data[i]])
-        if predict == test_target[i]:
-            correct += 1
-
-    acc = correct / test_num
-    svc_avg_sum += acc
-    print('\nSVM accuracy = %f' % acc)
+        acc = correct / test_num
+        knn_avg_sum += acc
+        acc_list.append(acc)
+        k_list.append(k)
+        print('\nn = %d, acc = %f' % (k, acc))
 
 
 
 # avg test result
-result_file = open( str(sys.argv[2]), 'w')
-
-print('\n\n===== test results =====')
-result_file.write('\n\n===== test results =====')
-print('\nexecute time: %d\n' % time)
-result_file.write('\nexecute time: %d\n' % time)
-print('\ndecision tree avg accuracy = %f' % (tree_avg_sum / time))
-result_file.write('\ndecision tree avg accuracy = %f' % (tree_avg_sum / time))
-print('\nrandom forest avg accuracy = %f' % (rf_avg_sum / time))
-result_file.write('\nrandom forest avg accuracy = %f' % (rf_avg_sum / time))
-print('\nkNN avg accuracy = %f' % (knn_avg_sum / time))
-result_file.write('\nkNN avg accuracy = %f' % (knn_avg_sum / time))
-print('\nnaïve Bayes avg accuracy = %f' % (nb_avg_sum / time))
-result_file.write('\nnaïve Bayes avg accuracy = %f' % (nb_avg_sum / time))
-print('\nSVM avg accuracy = %f' % (svc_avg_sum / time))
-result_file.write('\nSVM avg accuracy = %f' % (svc_avg_sum / time))
+# plt.plot(k_list, acc_list, '-o')
+plt.plot(k_list, acc_list, '-o')
+plt.savefig('knn_500.png')
+plt.show()
 print()
