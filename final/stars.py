@@ -280,7 +280,8 @@ for x in range(time):
     for i in range(total_num-1):
         r = []
         for a in range(1, 32):
-            # if(getAttrName(a) != '重視友情'):
+            # if(getAttrName(a) == '重視友情' or getAttrName(a) == '正義感' or getAttrName(a) == '體貼' or getAttrName(a) == '斤斤計較'):
+            #     continue
             r.append(data[i][getAttrName(a)])
         if train_count[data[i]['星座']] < TRAIN_NUM:
             train_data.append(r)
@@ -292,12 +293,13 @@ for x in range(time):
         train_count[data[i]['星座']] += 1
 
     # PCA
+    # pca = PCA(n_components = 25)
+    # pca.fit(train_data)
+    # train_data = pca.transform(train_data)
+    # test_data = pca.transform(test_data)
+
     # print('\nPCA = %d' % (31-x))
-    pca = PCA(n_components = 20)
     # print(train_data[0])
-    pca.fit(train_data)
-    train_data = pca.transform(train_data)
-    test_data = pca.transform(test_data)
     # print(train_data[0])
 
     # print(pca.explained_variance_ratio_)
@@ -337,7 +339,7 @@ for x in range(time):
 
     # KNN
     correct = 0
-    knn = KNeighborsClassifier(n_neighbors = 200, algorithm="kd_tree").fit(train_data, train_target)
+    knn = KNeighborsClassifier(n_neighbors = 400, algorithm="kd_tree").fit(train_data, train_target)
     # print('\n\n--- KNN ---')
 
     for i in range(test_num):
