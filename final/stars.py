@@ -216,7 +216,7 @@ for line in lines:
 for row in data:
     for i in range(1, 32):
         starSignAttr[row['星座']][getAttrName(i)] += row[getAttrName(i)]
-        starData[row['星座']][getAttrName(i)].append(row[getAttrName(i)])
+        # starData[row['星座']][getAttrName(i)].append(row[getAttrName(i)])
         if row['分析對象'] == '他人':
             otherSignAttr[row['星座']][getAttrName(i)] += row[getAttrName(i)]
 
@@ -227,36 +227,46 @@ for row in data:
                 otherSignData[getSignName(i)].append(row)
                 other_total += 1
 
-for row in data:
+starData = {}
+for i in range(1, 13):
+    starData[getSignName(i)] = {}
+    for a in range(1, 32):
+        starData[getSignName(i)][getAttrName(a)] = []
+
+for d in range(len(data)):
     for i in range(1, 32):
-        starData[row['星座']][getAttrName(i)].append(row[getAttrName(i)])
+        tmp = data[d][getAttrName(i)]
+        starData[data[d]['星座']][getAttrName(i)].append(tmp)
+    # print(starData)
+# starData['射手座']['樂觀'] = [0, 0, 0]
 
 # 印出各星座資料數量
-for i in range(1, 13):
-    print(getSignName(i) + ' = %d' % len(starSignData[getSignName(i)]))
+# for i in range(1, 13):
+#     print(getSignName(i) + ' = %d' % len(starSignData[getSignName(i)]))
 
 # 計算各星座的特質
-calAttr(starSignAttr, starSignData)
+# calAttr(starSignAttr, starSignData)
 
 # 計算標準差
-print(starData['雙魚座']['樂觀'])
-print(starData['射手座']['樂觀'])
+# print(starData['雙魚座']['樂觀'])
+# # print(tst)
+# print(starData['射手座']['樂觀'])
 
 for i in range(1, 13):
     for a in range(1, 32):
-        # np.std(array(starData[getSignName(i)][getAttrName(a)]))
+        # print(starData[getSignName(i)][getAttrName(a)])
         stddev[getSignName(i)][getAttrName(a)] = np.std(array(starData[getSignName(i)][getAttrName(a)]))
 
 # 列出每個星座的標準差
 print('\n\n===== 標準差 =====\n\n')
-# for s in range(1, 13):
-#     print('- ' + getSignName(s) + ' -\n')
+for s in range(1, 13):
+    print('- ' + getSignName(s) + ' -\n')
     # print(stddev[getSignName(s)])
-    # sorted_attr = sorted(stddev[getSignName(s)].items(), key=operator.itemgetter(1))
-    # sorted_attr.reverse()
-    # for a in range(0, 31):
-    #     print(sorted_attr[a])
-    # print('\n\n')
+    sorted_attr = sorted(stddev[getSignName(s)].items(), key=operator.itemgetter(1))
+    sorted_attr.reverse()
+    for a in range(0, 31):
+        print(sorted_attr[a])
+    print('\n\n')
 
 
 print('\n\n')
