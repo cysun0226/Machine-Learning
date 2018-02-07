@@ -1,3 +1,4 @@
+import starSignEnum
 import csv
 import math
 import sys
@@ -16,69 +17,18 @@ lines = []
 data = []
 target = []
 
-def getSignName(num):
-    return {
-        1 : u'摩羯座',
-        2 : u'水瓶座',
-        3 : u'雙魚座',
-        4 : u'牡羊座',
-        5 : u'金牛座',
-        6 : u'雙子座',
-        7 : u'巨蟹座',
-        8 : u'獅子座',
-        9 : u'處女座',
-        10: u'天秤座',
-        11: u'天蠍座',
-        12: u'射手座'
-    }[num]
-
-def getAttrName(num):
-    return {
-        1 : u'耐性',
-        2 : u'脾氣暴躁',
-        3 : u'幼稚',
-        4 : u'頑固',
-        5 : u'心思細膩',
-        6 : u'保守',
-        7 : u'冷靜',
-        8 : u'樂觀',
-        9 : u'活潑',
-        10: u'公正',
-        11: u'優柔寡斷',
-        12: u'強勢',
-        13: u'浪漫',
-        14: u'過度理想化',
-        15: u'斤斤計較',
-        16: u'心機重',
-        17: u'完美主義',
-        18: u'愛計仇',
-        19: u'與眾不同',
-        20: u'愛面子',
-        21: u'有魅力',
-        22: u'正義感',
-        23: u'重視友情',
-        24: u'專情',
-        25: u'愛哭',
-        26: u'顧家',
-        27: u'體貼',
-        28: u'情緒化',
-        29: u'口才',
-        30: u'創意',
-        31: u'潔癖'
-    }[num]
-
 # 計算各星座的特質
 def calAttr(signAttr, signData):
     for i in range(1, 13): # 12 個星座
         for a in range(1, 32): # 32 題
-            signAttr[getSignName(i)][getAttrName(a)] /= len(signData[getSignName(i)])
+            signAttr[starSignEnum.getSignName(i)][starSignEnum.getAttrName(a)] /= len(signData[starSignEnum.getSignName(i)])
 
 # 列出每個星座前n高的特質
 def highestAttr(signAttr, n):
     for i in range(1, 13): # 12 個星座
-        sorted_a = sorted(signAttr[getSignName(i)].items(), key=operator.itemgetter(1))
+        sorted_a = sorted(signAttr[starSignEnum.getSignName(i)].items(), key=operator.itemgetter(1))
         sorted_a.reverse()
-        print('---' + getSignName(i) + '---\n')
+        print('---' + starSignEnum.getSignName(i) + '---\n')
         a = 0
         for attr in range(32):
             if (sorted_a[attr][0] == '專情') or (sorted_a[attr][0] == '重視友情'):
@@ -94,12 +44,12 @@ def maxAttrSign(signAttr, n):
     for a in range(1, 32):
         attr = {}
         for s in range(1, 13):
-            attr[getSignName(s)] = signAttr[getSignName(s)][getAttrName(a)]
+            attr[starSignEnum.getSignName(s)] = signAttr[starSignEnum.getSignName(s)][starSignEnum.getAttrName(a)]
 
         sorted_attr = sorted(attr.items(), key=operator.itemgetter(1))
         sorted_attr.reverse()
 
-        print('--- ' + getAttrName(a) + '---')
+        print('--- ' + starSignEnum.getAttrName(a) + '---')
         print('\n前三名\n')
         for i in range(n):
             print(sorted_attr[i])
@@ -119,16 +69,16 @@ otherSignAttr = {}
 a = {}
 li = {}
 for i in range(1, 32):
-    a[getAttrName(i)] = 0
-    li[getAttrName(i)] = list()
+    a[starSignEnum.getAttrName(i)] = 0
+    li[starSignEnum.getAttrName(i)] = list()
 
 for i in range(1, 13):
-    starSignData[getSignName(i)] = []
-    starSignAttr[getSignName(i)] = dict(a)
-    otherSignData[getSignName(i)] = []
-    otherSignAttr[getSignName(i)] = dict(a)
-    stddev[getSignName(i)] = dict(a)
-    starData[getSignName(i)] = dict(li)
+    starSignData[starSignEnum.getSignName(i)] = []
+    starSignAttr[starSignEnum.getSignName(i)] = dict(a)
+    otherSignData[starSignEnum.getSignName(i)] = []
+    otherSignAttr[starSignEnum.getSignName(i)] = dict(a)
+    stddev[starSignEnum.getSignName(i)] = dict(a)
+    starData[starSignEnum.getSignName(i)] = dict(li)
 
 
 # main
@@ -215,34 +165,34 @@ for line in lines:
 # 將資料依星座分類並加總特質
 for row in data:
     for i in range(1, 32):
-        starSignAttr[row['星座']][getAttrName(i)] += row[getAttrName(i)]
-        # starData[row['星座']][getAttrName(i)].append(row[getAttrName(i)])
+        starSignAttr[row['星座']][starSignEnum.getAttrName(i)] += row[starSignEnum.getAttrName(i)]
+        # starData[row['星座']][starSignEnum.getAttrName(i)].append(row[starSignEnum.getAttrName(i)])
         if row['分析對象'] == '他人':
-            otherSignAttr[row['星座']][getAttrName(i)] += row[getAttrName(i)]
+            otherSignAttr[row['星座']][starSignEnum.getAttrName(i)] += row[starSignEnum.getAttrName(i)]
 
     for i in range(1, 13):
-        if(row['星座'] == getSignName(i)):
-            starSignData[getSignName(i)].append(row)
+        if(row['星座'] == starSignEnum.getSignName(i)):
+            starSignData[starSignEnum.getSignName(i)].append(row)
             if row['分析對象'] == '他人':
-                otherSignData[getSignName(i)].append(row)
+                otherSignData[starSignEnum.getSignName(i)].append(row)
                 other_total += 1
 
 starData = {}
 for i in range(1, 13):
-    starData[getSignName(i)] = {}
+    starData[starSignEnum.getSignName(i)] = {}
     for a in range(1, 32):
-        starData[getSignName(i)][getAttrName(a)] = []
+        starData[starSignEnum.getSignName(i)][starSignEnum.getAttrName(a)] = []
 
 for d in range(len(data)):
     for i in range(1, 32):
-        tmp = data[d][getAttrName(i)]
-        starData[data[d]['星座']][getAttrName(i)].append(tmp)
+        tmp = data[d][starSignEnum.getAttrName(i)]
+        starData[data[d]['星座']][starSignEnum.getAttrName(i)].append(tmp)
     # print(starData)
 # starData['射手座']['樂觀'] = [0, 0, 0]
 
 # 印出各星座資料數量
 # for i in range(1, 13):
-#     print(getSignName(i) + ' = %d' % len(starSignData[getSignName(i)]))
+#     print(starSignEnum.getSignName(i) + ' = %d' % len(starSignData[starSignEnum.getSignName(i)]))
 
 # 計算各星座的特質
 # calAttr(starSignAttr, starSignData)
@@ -254,15 +204,15 @@ for d in range(len(data)):
 
 for i in range(1, 13):
     for a in range(1, 32):
-        # print(starData[getSignName(i)][getAttrName(a)])
-        stddev[getSignName(i)][getAttrName(a)] = np.std(array(starData[getSignName(i)][getAttrName(a)]))
+        # print(starData[starSignEnum.getSignName(i)][starSignEnum.getAttrName(a)])
+        stddev[starSignEnum.getSignName(i)][starSignEnum.getAttrName(a)] = np.std(array(starData[starSignEnum.getSignName(i)][starSignEnum.getAttrName(a)]))
 
 # 列出每個星座的標準差
 print('\n\n===== 標準差 =====\n\n')
 for s in range(1, 13):
-    print('- ' + getSignName(s) + ' -\n')
-    # print(stddev[getSignName(s)])
-    sorted_attr = sorted(stddev[getSignName(s)].items(), key=operator.itemgetter(1))
+    print('- ' + starSignEnum.getSignName(s) + ' -\n')
+    # print(stddev[starSignEnum.getSignName(s)])
+    sorted_attr = sorted(stddev[starSignEnum.getSignName(s)].items(), key=operator.itemgetter(1))
     sorted_attr.reverse()
     for a in range(0, 31):
         space = '  '
@@ -287,7 +237,7 @@ print('\n\n')
 # print('資料總數 = %d 份\n' % other_total)
 #
 # for i in range(1, 13):
-#     print(getSignName(i) + ' = %d' % len(otherSignData[getSignName(i)]))
+#     print(starSignEnum.getSignName(i) + ' = %d' % len(otherSignData[starSignEnum.getSignName(i)]))
 #
 # # 計算各星座的特質
 # calAttr(otherSignAttr, otherSignData)
